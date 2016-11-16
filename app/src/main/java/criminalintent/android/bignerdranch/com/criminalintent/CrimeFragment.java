@@ -18,6 +18,7 @@ import android.widget.CheckBox;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+import java.util.UUID;
 
 /**
  * Created by zkhk on 2016/11/14.
@@ -35,9 +36,11 @@ public class CrimeFragment extends Fragment {
     // onCreateView(...)方法的实现代码，从fragment_crime.xml布局中实例化并返回视图
     public void onCreate(Bundle saveInstanceState){
         super.onCreate(saveInstanceState);
-        mCrime = new Crime();
-    }
 
+        // 取对象用 :getSerializableExtra;
+        UUID crimeID = (UUID)getActivity().getIntent().getSerializableExtra(CrimeActivity.EXTRA_CRIME_ID);
+        mCrime = CrimeLab.get(getActivity()).getCrime(crimeID);
+    }
 
     //    fragment 的 视 图 是 直 接 通 过 调 用 LayoutInflater. inflate(...)方法并传入布局的资源ID生成的。第二个参数是视图的父视图，我们通常需要父 视图来正确配置组件。第三个参数告知布局生成器是否将生成的视图添加给父视图。
     // 等同与Activity 的 onCreate
@@ -55,12 +58,10 @@ public class CrimeFragment extends Fragment {
         SimpleDateFormat sdformat = new SimpleDateFormat("EE dd, yyyy");//24小时制
         String LgTime = sdformat.format(date);
         mDateButton.setText(LgTime);
-
-
-
         mDateButton.setEnabled(false); //   用按钮可以确保它不响应用户的单击事件。 用后，按钮的外观样式也会发生改变(变为 灰色)，表明它已处于 用状态。
 
         mSolvedCheckBox = (CheckBox)view.findViewById(R.id.crime_Solved);
+        mSolvedCheckBox.setChecked(mCrime.isSolved());
         mSolvedCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean isSolved) {
@@ -69,6 +70,7 @@ public class CrimeFragment extends Fragment {
         });
 
         mTitleField = (EditText)view.findViewById(R.id.crime_title);
+        mTitleField.setText( mCrime.getTitle());
         mTitleField.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {

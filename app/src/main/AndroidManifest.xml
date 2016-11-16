@@ -16,7 +16,10 @@
             <!--</intent-filter>-->
         <!--</activity>-->
 
-        // 设置列表为主界面
+        <activity android:name=".CrimeActivity">
+        </activity>
+
+        <!-- 设置列表为主界面-->
         <activity android:name=".CrimeListActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
