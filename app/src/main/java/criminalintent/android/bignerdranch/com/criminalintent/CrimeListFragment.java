@@ -5,10 +5,13 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.List;
 
@@ -33,10 +36,8 @@ public class CrimeListFragment extends Fragment {
 //         注意，没有LayoutManager的支持，不仅RecyclerView无法工作，还会导致应用崩溃。所
 //        以，RecyclerView视图创建完成后，就立即转交给了LayoutManager对象。
         mCrimeRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-
         updateUI();
         return view;
-
     }
 
     // 更新UI
@@ -46,8 +47,6 @@ public class CrimeListFragment extends Fragment {
         mCrimeAdapter = new CrimeAdapter(crimes);
         mCrimeRecyclerView.setAdapter(mCrimeAdapter);
     }
-
-
 
     // <泛型>
     private class CrimeAdapter extends RecyclerView.Adapter<CrimeHolder> {
@@ -63,7 +62,7 @@ public class CrimeListFragment extends Fragment {
         public CrimeHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
             LayoutInflater inflater = LayoutInflater.from(getActivity());
-            View view = inflater.inflate(android.R.layout.simple_list_item_1, parent, false);
+            View view = inflater.inflate(R.layout.list_item_crime, parent, false);
             return new CrimeHolder(view);
         }
 
@@ -71,7 +70,7 @@ public class CrimeListFragment extends Fragment {
         @Override
         public void onBindViewHolder(CrimeHolder holder, int position) {
             Crime crime = mCrimes.get(position);
-            holder.mTitleTextView.setText(crime.getTitle());
+            holder.bindCrime(crime);
         }
 
         // 返回行数
@@ -85,13 +84,38 @@ public class CrimeListFragment extends Fragment {
 
     // 内部类
     // ViewHolder类引用了用于显示crime标题的TextView视图。
-    private class CrimeHolder extends RecyclerView.ViewHolder {
+    private class CrimeHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+
+        private Crime mCrime;
 
         public TextView mTitleTextView;
+        public TextView mDateTextView;
+        public CheckBox mSolvedCheckBox;
+
+
+
 
         public CrimeHolder(View itemView) {
             super(itemView);
-            mTitleTextView = (TextView) itemView;
+            mTitleTextView = (TextView) itemView.findViewById(R.id.list_item_crime_title_text_view);
+            mDateTextView = (TextView) itemView.findViewById(R.id.list_item_crime_date_text_view);
+            mSolvedCheckBox = (CheckBox) itemView.findViewById(R.id.list_item_crime_solved_check_box);
+
+            itemView.setOnClickListener(this);
+        }
+
+        public void bindCrime(Crime crime) {
+
+            mCrime = crime;
+            mTitleTextView.setText(crime.getTitle());
+            mDateTextView.setText(crime.getDate().toString());
+            mSolvedCheckBox.setChecked(crime.isSolved());
+        }
+
+        @Override
+        public void onClick(View view) {
+            Toast.makeText(getActivity(), mCrime.getTitle() + " clicked!", Toast.LENGTH_SHORT)
+                    .show();
         }
     }
 }

@@ -2,10 +2,11 @@
 
     <!--在其他组件的定义中使用某个组件的ID时，符号+不应该包括在内。符号+是在组件首 次出现在布局文件中时，用来创建资源ID的，一般出现在android:id属性值里。如果有必要， 当然可以使用+在其他地方创建ID，但在组件的android:id属性中包括ID的话，布局文件更加清 16 晰可读。-->
 
+<!--书里是android:layout_height="wrap_content" , 这样照成一行是一个屏幕-->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 xmlns:tools="http://schemas.android.com/tools"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="wrap_content">
 
     <CheckBox
         android:id="@+id/list_item_crime_solved_check_box"
@@ -33,6 +34,7 @@
         android:layout_toLeftOf="@id/list_item_crime_solved_check_box"
         android:padding="4dp"
         tools:text="Crime Date"/>
+
 
 
 </RelativeLayout>
