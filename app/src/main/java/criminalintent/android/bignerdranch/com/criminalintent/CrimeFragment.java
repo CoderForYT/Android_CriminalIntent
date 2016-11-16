@@ -32,14 +32,27 @@ public class CrimeFragment extends Fragment {
     private Button mDateButton; // 时间日期
     private CheckBox mSolvedCheckBox; // 时间是否处理
 
+    private static final String ARG_CRIME_ID = "crime_id";
+
+    // 暴露接口, 为了与activity解耦, 变成与Acvity没有关系的fragment;
+    public static CrimeFragment newInstance(UUID crimeId) {
+
+        Bundle args = new Bundle();
+        args.putSerializable(ARG_CRIME_ID, crimeId);
+
+        CrimeFragment crimeFragment = new CrimeFragment();
+        crimeFragment.setArguments(args);
+        return crimeFragment;
+    }
+
     @Override
     // onCreateView(...)方法的实现代码，从fragment_crime.xml布局中实例化并返回视图
     public void onCreate(Bundle saveInstanceState){
         super.onCreate(saveInstanceState);
 
         // 取对象用 :getSerializableExtra;
-        UUID crimeID = (UUID)getActivity().getIntent().getSerializableExtra(CrimeActivity.EXTRA_CRIME_ID);
-        mCrime = CrimeLab.get(getActivity()).getCrime(crimeID);
+        UUID crimeId = (UUID) getArguments().getSerializable(ARG_CRIME_ID);
+        mCrime = CrimeLab.get(getActivity()).getCrime(crimeId);
     }
 
     //    fragment 的 视 图 是 直 接 通 过 调 用 LayoutInflater. inflate(...)方法并传入布局的资源ID生成的。第二个参数是视图的父视图，我们通常需要父 视图来正确配置组件。第三个参数告知布局生成器是否将生成的视图添加给父视图。
@@ -73,19 +86,15 @@ public class CrimeFragment extends Fragment {
         mTitleField.setText( mCrime.getTitle());
         mTitleField.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
 
-            }
-
-            @Override
+            @Override // 更新字符串
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 mCrime.setTitle(charSequence.toString());
             }
 
             @Override
-            public void afterTextChanged(Editable editable) {
-
-            }
+            public void afterTextChanged(Editable editable) {}
         });
 
         return view;
