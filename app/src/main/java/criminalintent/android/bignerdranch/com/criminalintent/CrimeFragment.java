@@ -1,9 +1,12 @@
 package criminalintent.android.bignerdranch.com.criminalintent;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -33,6 +36,7 @@ public class CrimeFragment extends Fragment {
     private CheckBox mSolvedCheckBox; // 时间是否处理
 
     private static final String ARG_CRIME_ID = "crime_id";
+    private static final String DIALOG_DATE = "DialogDate";
 
     // 暴露接口, 为了与activity解耦, 变成与Acvity没有关系的fragment;
     public static CrimeFragment newInstance(UUID crimeId) {
@@ -66,12 +70,24 @@ public class CrimeFragment extends Fragment {
         mDateButton = (Button)view.findViewById(R.id.crime_date);
 //        mDateButton.setText(mCrime.getDate().toString());
 
-        Date date = new Date();
+        final Date date = new Date();
 
         SimpleDateFormat sdformat = new SimpleDateFormat("EE dd, yyyy");//24小时制
         String LgTime = sdformat.format(date);
         mDateButton.setText(LgTime);
-        mDateButton.setEnabled(false); //   用按钮可以确保它不响应用户的单击事件。 用后，按钮的外观样式也会发生改变(变为 灰色)，表明它已处于 用状态。
+//        mDateButton.setEnabled(false); //   用按钮可以确保它不响应用户的单击事件。 用后，按钮的外观样式也会发生改变(变为 灰色)，表明它已处于 用状态。
+        mDateButton.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+                FragmentManager fm = getFragmentManager();
+                DialogFragment dialogFragment = new DatePickerFragment();
+                // 两种展示对话框的的方式
+                dialogFragment.show(fm, DIALOG_DATE);
+//                dialogFragment.show(fm.beginTransaction(), DIALOG_DATE);
+            }
+        });
+
 
         mSolvedCheckBox = (CheckBox)view.findViewById(R.id.crime_Solved);
         mSolvedCheckBox.setChecked(mCrime.isSolved());
