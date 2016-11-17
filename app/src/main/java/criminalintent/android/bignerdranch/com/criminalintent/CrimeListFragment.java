@@ -109,9 +109,6 @@ public class CrimeListFragment extends Fragment {
         public TextView mDateTextView;
         public CheckBox mSolvedCheckBox;
 
-
-
-
         public CrimeHolder(View itemView) {
             super(itemView);
             mTitleTextView = (TextView) itemView.findViewById(R.id.list_item_crime_title_text_view);
@@ -131,7 +128,10 @@ public class CrimeListFragment extends Fragment {
 
         @Override
         public void onClick(View view) {
-            Intent intent = CrimeActivity.newIntent(getActivity(), mCrime.getID()) ;
+//            Intent intent = CrimeActivity.newIntent(getActivity(), mCrime.getID()) ;
+//            startActivity(intent);
+
+            Intent intent = CrimePageActivity.newIntent(getActivity(), mCrime.getID());
             startActivity(intent);
         }
     }
