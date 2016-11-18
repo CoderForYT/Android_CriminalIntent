@@ -1,6 +1,7 @@
 package criminalintent.android.bignerdranch.com.criminalintent;
 
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -14,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -37,6 +39,7 @@ public class CrimeFragment extends Fragment {
 
     private static final String ARG_CRIME_ID = "crime_id";
     private static final String DIALOG_DATE = "DialogDate";
+    private static final int REQUEST_DATE = 0;
 
     // 暴露接口, 为了与activity解耦, 变成与Acvity没有关系的fragment;
     public static CrimeFragment newInstance(UUID crimeId) {
@@ -68,20 +71,25 @@ public class CrimeFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_crime, container, false);
         mDateButton = (Button)view.findViewById(R.id.crime_date);
-//        mDateButton.setText(mCrime.getDate().toString());
+        updateDate();
 
-        final Date date = new Date();
+        // 显示指定的格式 :
+//        final Date date = new Date();
+//        SimpleDateFormat sdformat = new SimpleDateFormat("EE dd, yyyy");//24小时制
+//        String LgTime = sdformat.format(date);
+//        mDateButton.setText(LgTime);
 
-        SimpleDateFormat sdformat = new SimpleDateFormat("EE dd, yyyy");//24小时制
-        String LgTime = sdformat.format(date);
-        mDateButton.setText(LgTime);
+
 //        mDateButton.setEnabled(false); //   用按钮可以确保它不响应用户的单击事件。 用后，按钮的外观样式也会发生改变(变为 灰色)，表明它已处于 用状态。
         mDateButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View view) {
                 FragmentManager fm = getFragmentManager();
-                DialogFragment dialogFragment = new DatePickerFragment();
+
+                DialogFragment dialogFragment = DatePickerFragment.newInstance(mCrime.getDate());
+//                DialogFragment dialogFragment = new DatePickerFragment();
+                dialogFragment.setTargetFragment(CrimeFragment.this, REQUEST_DATE);
                 // 两种展示对话框的的方式
                 dialogFragment.show(fm, DIALOG_DATE);
 //                dialogFragment.show(fm.beginTransaction(), DIALOG_DATE);
@@ -108,11 +116,30 @@ public class CrimeFragment extends Fragment {
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 mCrime.setTitle(charSequence.toString());
             }
-
             @Override
             public void afterTextChanged(Editable editable) {}
         });
 
         return view;
     }
+
+    private void updateDate() {
+        mDateButton.setText(mCrime.getDate().toString());
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (resultCode != Activity.RESULT_OK) {
+            return;
+        }
+
+        if (requestCode == REQUEST_DATE) {
+            Date date = (Date)data.getSerializableExtra(DatePickerFragment.EXTRA_DATE);
+            mCrime.setDate(date);
+            updateDate();
+        }
+    }
 }
+3
